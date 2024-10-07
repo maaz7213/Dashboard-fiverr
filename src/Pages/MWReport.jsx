@@ -25,7 +25,7 @@ const MWReport = () => {
     const fetchData = async () => {
       // console.log('Fetching data'); // CLG 1
       try {
-        const response = await axios.get('http://dashboard-fiverr-nodejs.vercel.app/shiftwise');
+        const response = await axios.get('https://dashboard-fiverr-nodejs.vercel.app/shiftwise');
         // console.log('API Response:', response.data.message); // CLG 2
         setReportData(response.data.message); // Set report data from the response
         setLoading(false);
@@ -43,7 +43,7 @@ const MWReport = () => {
     const fetchData = async () => {
       // console.log('Fetching data'); // CLG 1
       try {
-        const response = await axios.get('http://dashboard-fiverr-nodejs.vercel.app/get_operator_selections');
+        const response = await axios.get('https://dashboard-fiverr-nodejs.vercel.app/get_operator_selections');
         // console.log('API Response:', response.data.message); // CLG 2
         setOperator(response.data.data); // Set report data from the response
         setLoading(false);
