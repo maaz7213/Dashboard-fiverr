@@ -1,0 +1,48 @@
+/* OperatorEntry.css */
+
+.operator-entry {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+}
+
+.machine-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
+
+.machine-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.machine-table th,
+.machine-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.machine-table th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.machine-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.machine-table tr:hover {
+  background-color: #ddd;
+}
+
+.no-data {
+  text-align: center;
+}

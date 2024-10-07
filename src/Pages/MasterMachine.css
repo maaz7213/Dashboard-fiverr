@@ -1,0 +1,112 @@
+/* Container for the entire content */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Style for the dropdown and its container */
+#deviceFilter {
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Style for the device group */
+.device-group {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Loader style */
+.loader {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+}
+
+/* Individual data card style */
+.device-data-item {
+  margin-bottom: 10px;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.device-data-item h3,
+.device-data-item h4,
+.device-data-item p {
+  margin: 10px 0;
+  color: #444;
+}
+
+/* Bold titles in the data cards */
+.device-data-item strong {
+  color: #333;
+  font-weight: bold;
+}
+
+/* Table-like structure for lookup values */
+.lookup-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lookup-table th,
+.lookup-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.lookup-table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.lookup-table td {
+  background-color: #fafafa;
+}
+
+/* Shift information section styling */
+.shift-info {
+  margin: 10px 0;
+}
+
+.shift-info h5 {
+  color: #555;
+}
+
+.shift-info p {
+  margin: 5px 0;
+}
+
+/* Average values section */
+.average-values {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.average-values strong {
+  color: #333;
+}

@@ -1,0 +1,39 @@
+/* Container for the entire bar chart section */
+.bar-chart-placeholder {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
+  }
+  
+  /* Title of the Bar Graph */
+  .bar-chart-placeholder h3 {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Responsive container to ensure the chart scales */
+  .bar-chart {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* You may also want to style tooltips and legend inside Recharts using a global approach */
+  .recharts-tooltip-wrapper {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .recharts-legend-wrapper {
+    font-size: 0.9em;
+    color: #555;
+  }
+  

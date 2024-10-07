@@ -1,0 +1,233 @@
+/* Global Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fc; /* Light background */
+}
+
+/* Container for the entire dashboard */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+  background-color: #fff; /* White background for content */
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+/* Main Content Area */
+.main-content {
+  padding: 20px;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* General Header Styles */
+.dashboard-header {
+  padding: 20px;
+  background-color: #f4f4f9;
+}
+
+.dashboard-header h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Header Controls */
+.header-controls {
+  display: flex;
+  justify-content: space-between; /* Make sure the two divs are spaced apart */
+}
+
+/* Date Controls in Column */
+.date-controls {
+  display: flex;
+  flex-direction: row; /* Arrange the buttons in a column */
+  gap: 10px; /* Add space between the buttons */
+}
+
+.date-controls button {
+  margin-bottom: 10px; /* Add space between buttons */
+}
+
+/* Shift Controls in Row (default behavior) */
+.shift-controls {
+  display: flex;
+  gap: 10px; /* Add space between the buttons */
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Progress Section (Circular Progress Bars) */
+.progress-section {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 40px;
+}
+
+.progress-circle {
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.progress-circle:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  background-color: #007bff; /* Change the background color on hover */
+  color: #fff; /* Change the text color on hover */
+}
+
+
+.progress-circle:hover h3{
+  color: #fff;
+}
+
+.progress-circle:hover p{
+  color: #fff;
+}
+
+/* Custom Circular Progress Styling */
+.CircularProgressbar {
+  width: 120px;
+  height: 120px;
+  margin: 10px auto;
+}
+
+.CircularProgressbar .CircularProgressbar-path {
+  stroke: #007bff; /* Blue color for the progress path */
+  transition: stroke 0.3s ease-in-out;
+}
+
+.CircularProgressbar .CircularProgressbar-text {
+  fill: #007bff; /* Blue color for the percentage text */
+  font-size: 22px;
+  font-weight: bold;
+  transition: fill 0.3s ease-in-out;
+}
+
+/* Change progress bar path and text color on hover */
+.progress-circle:hover .CircularProgressbar .CircularProgressbar-path {
+  stroke: #fff; /* Change the path color to white on hover */
+}
+
+.progress-circle:hover .CircularProgressbar .CircularProgressbar-text {
+  fill: #fff; /* Change the text color to white on hover */
+}
+
+/* Progress Circle Details */
+.progress-circle h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #333;
+  transition: color 0.3s ease-in-out;
+}
+
+.progress-circle p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Bar Chart Section */
+.bar-chart-section {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 10px;
+  }
+
+  .progress-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header-controls {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+}
+/* Progress Section in Flexbox */
+.progress-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px; /* Add spacing between the circular progress bars */
+}
+
+/* Device Section */
+.device-section {
+  flex-basis: 100%;
+  margin-bottom: 30px;
+  flex-direction: row;
+  display: flex;
+  overflow-x: auto;
+  gap: 41px;
+}
+
+/* Channel Section */
+.channel-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; 
+  margin: 10px;/* Add spacing between channels */
+}
+
+/* Shift Section - for each circular progress bar */
+.shift-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-basis: 200px; /* Width of each progress bar container */
+  padding: 10px;
+  text-align: center; /* Center the text under the progress bar */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
