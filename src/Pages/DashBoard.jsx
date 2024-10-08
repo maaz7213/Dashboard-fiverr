@@ -221,10 +221,10 @@ function App() {
         >
           {selectedMachine && (
             <div>
-              <p><strong>Device {selectedMachine.machineNumber}</strong></p>
-              <p>Channel: {selectedMachine.channel.toUpperCase()}</p>
-              <p>Shift: {selectedMachine.shift.charAt(0).toUpperCase() + selectedMachine.shift.slice(1)}</p>
-              <p>Run Time Percentage: {selectedMachine.percentage.toFixed(2)}%</p>
+              <p><strong>Device {selectedMachine?.machineNumber}</strong></p>
+              <p>Channel: {selectedMachine?.channel.toUpperCase()}</p>
+              <p>Shift: {selectedMachine?.shift?.charAt(0)?.toUpperCase() + selectedMachine?.shift?.slice(1)}</p>
+              <p>Run Time Percentage: {selectedMachine?.percentage?.toFixed(2)}%</p>
               <p>Average {selectedMachine}</p>
             </div>
           )}
