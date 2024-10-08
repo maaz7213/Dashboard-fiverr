@@ -15,33 +15,38 @@ console.log("percentages ",percentages);
   const averagePercentage = percentages.reduce((a, b) => a + b, 0) / percentages.length; // Calculate average
 
   return (
-    <svg key={index} width={size} height={size}>
-    <circle
-      stroke={colors[index]} // Circle color based on index
-      fill="transparent"
-      strokeWidth={strokeWidth}
-      r={currentRadius}
-      cx={size / 2}
-      cy={size / 2}
-      strokeDasharray={currentCircumference}
-      strokeDashoffset={strokeDashoffset}
-      strokeLinecap="round"
-      transform={`rotate(-90 ${size / 2} ${size / 2})`} // Rotate to start from top
-    />
-  </svg>
-);
-}, { previousPercentage: 0 })}
-<text
-x="50%" 
-y="50%" 
-dominantBaseline="middle" 
-textAnchor="middle" 
-fontSize="24" 
-fill="black"
->
-{Math.round(totalPercentage / percentages.length)}% {/* Display average percentage */}
-</text>
-</SvgWrapper>
+    <SvgWrapper width={size} height={size}>
+      {percentages.map((percentage, index) => {
+        const currentRadius = radius - index * (strokeWidth + 5); // Reduces radius for inner circles
+        const currentCircumference = 2 * Math.PI * currentRadius;
+        return (
+          <svg width={size} height={size}>
+          <circle
+            key={index}
+            stroke={colors[index]} // Circle color based on index
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            r={currentRadius}
+            cx={size / 2}
+            cy={size / 2}
+            strokeDasharray={currentCircumference}
+            strokeDashoffset={getStrokeDashoffset(percentage)}
+            strokeLinecap="round"
+          />
+          <text
+            x="50%" 
+            y="50%" 
+            dominantBaseline="middle" 
+            textAnchor="middle" 
+            fontSize="24" 
+            fill="black"
+          >
+            {Math.round(averagePercentage)} {/* Display the value, rounded */}
+          </text>
+        </svg>
+        );
+      })}
+    </SvgWrapper>
   );
 };
 const SvgWrapper = styled.svg`
