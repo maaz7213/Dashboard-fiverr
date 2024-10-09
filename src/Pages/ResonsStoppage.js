@@ -317,7 +317,8 @@ const ReasonsStoppage = () => {
         const response = await axios.get(`${URL}/get_save_off_reasons`);
         console.log("Response data:", response.data.data); // Log the actual data for debugging
         setData(response.data.data); // Set the raw data
-        groupDataByDate(response.data.data); // Group data by date
+        let re = groupDataByDate(response.data.data); // Group data by date
+        console.log("group by date ", re);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
