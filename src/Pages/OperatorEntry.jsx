@@ -447,77 +447,79 @@ const OperatorEntry = () => {
   return (
     <div className="operator-entry">
       <h2>OPERATOR ENTRY</h2>
-      
+
       {/* Refresh Data Button */}
       <div style={{ marginBottom: '20px' }}>
-        <button onClick={() => {
-          fetchMachineData();
-          fetchOperatorSelections();
-          processdatatofilter();
-        }}>
+        <button
+          onClick={() => {
+            fetchMachineData();
+            fetchOperatorSelections();
+            processdatatofilter();
+          }}
+        >
           Refresh Data
         </button>
       </div>
 
       {machineData &&
-        Object.keys(machineData).map((machineKey) => (
-          <div key={machineKey}>
-            <h3
-              className="machine-header"
-              onClick={() => toggleMachineVisibility(machineKey)}
-              style={{ cursor: 'pointer' }}
-            >
-              {visibleMachines[machineKey] ? '▼' : '▶'} {machineKey}
-            </h3>
-            {visibleMachines[machineKey] && (
-              <table className="machine-table">
-                {tableHeaders}
-                <tbody>
-                  {machineData[machineKey].map((item, index) => {
-                    const uniqueKey = `${machineKey}_${item.shift}_${item.channel}_${index}`;
-                    return (
-                      <tr key={uniqueKey}>
-                        <td>{item.currentdate}</td>
-                        <td>{item.shift}</td>
-                        <td>{formatTime(item.shift_time)}</td>
-                        <td>{item.run_time}</td>
-                        <td>{item.working_time}</td>
-                        <td>
-                          {loadingOperators ? (
-                            <span>Loading operators...</span>
-                          ) : errorOperators ? (
-                            <span>{errorOperators}</span>
-                          ) : (
-                            <select
-                              value={selectedOperators[uniqueKey] || ''}
-                              onChange={(e) =>
-                                handleOperatorChange(uniqueKey, e.target.value, item)
-                              }
-                            >
-                              <option value="">Select Operator</option>
-                              {operators.map((operator) => (
-                                <option key={operator.id} value={operator.id}>
-                                  {operator.name}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {machineData[machineKey].length === 0 && (
-                    <tr>
-                      <td colSpan="6" className="no-data">
-                        No Data
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
-        ))}
+        Object.keys(machineData).map((machineKey) => {
+          // Only show the device and channel if there's data for that machineKey
+          if (machineData[machineKey].length === 0) {
+            return null;
+          }
+
+          return (
+            <div key={machineKey}>
+              <h3
+                className="machine-header"
+                onClick={() => toggleMachineVisibility(machineKey)}
+                style={{ cursor: 'pointer' }}
+              >
+                {visibleMachines[machineKey] ? '▼' : '▶'} {machineKey}
+              </h3>
+              {visibleMachines[machineKey] && (
+                <table className="machine-table">
+                  {tableHeaders}
+                  <tbody>
+                    {machineData[machineKey].map((item, index) => {
+                      const uniqueKey = `${machineKey}_${item.shift}_${item.channel}_${index}`;
+                      return (
+                        <tr key={uniqueKey}>
+                          <td>{item.currentdate}</td>
+                          <td>{item.shift}</td>
+                          <td>{formatTime(item.shift_time)}</td>
+                          <td>{item.run_time}</td>
+                          <td>{item.working_time}</td>
+                          <td>
+                            {loadingOperators ? (
+                              <span>Loading operators...</span>
+                            ) : errorOperators ? (
+                              <span>{errorOperators}</span>
+                            ) : (
+                              <select
+                                value={selectedOperators[uniqueKey] || ''}
+                                onChange={(e) =>
+                                  handleOperatorChange(uniqueKey, e.target.value, item)
+                                }
+                              >
+                                <option value="">Select Operator</option>
+                                {operators.map((operator) => (
+                                  <option key={operator.id} value={operator.id}>
+                                    {operator.name}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        })}
     </div>
   );
 };
