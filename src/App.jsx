@@ -56,8 +56,8 @@ const Sidebar = () => {
           </div>
           {activeMenu === 'report' && (
             <ul className="submenu">
-              <li><Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}>Operator</Link></li>
-              <li><Link to="/mwreport/machine" className={location.pathname === '/mwreport/machine' ? 'active' : ''}>Machine</Link></li>
+              <li><Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}>Machine</Link></li>
+              <li><Link to="/mwreport/machine" className={location.pathname === '/mwreport/machine' ? 'active' : ''}>Operator</Link></li>
               <li><Link to="/mwreport/stoppage" className={location.pathname === '/mwreport/stoppage' ? 'active' : ''}>Stoppage</Link></li>
             </ul>
           )}
