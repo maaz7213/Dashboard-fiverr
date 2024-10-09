@@ -441,7 +441,7 @@ const ReasonsStoppage = () => {
       {/* Render a table for each group of data (grouped by date) */}
       {Object.keys(groupedData).map((date) => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ marginBottom: '10px' }}>Data for {groupedData[date]}</h3>
+          <h3 style={{ marginBottom: '10px' }}>Data for {dayjs(date).format('YY/M/D')}</h3>
           <table
             style={{
               width: '100%',

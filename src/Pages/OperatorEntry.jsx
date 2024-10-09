@@ -333,8 +333,9 @@ const OperatorEntry = () => {
     setMachineData(processedData);
   }, [data, operatorSelections]);
 
-  // Fetch operators based on user ID
-  useEffect(() => {
+
+
+  const processdatatofilter  = () =>{
     const userId = localStorage.getItem('ID');
     if (!userId) {
       console.error('User ID not found in localStorage.');
@@ -342,19 +343,24 @@ const OperatorEntry = () => {
       setLoadingOperators(false);
       return;
     }
-
     axios
-      .get(`${URL}/get_operators_by_userid/${userId}`)
-      .then((response) => {
-        console.log('Operators fetched:', response.data.operators);
-        setOperators(response.data.operators);
-        setLoadingOperators(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching operators:', err);
-        setErrorOperators('Error fetching operators');
-        setLoadingOperators(false);
-      });
+    .get(`${URL}/get_operators_by_userid/${userId}`)
+    .then((response) => {
+      console.log('Operators fetched:', response.data.operators);
+      setOperators(response.data.operators);
+      setLoadingOperators(false);
+    })
+    .catch((err) => {
+      console.error('Error fetching operators:', err);
+      setErrorOperators('Error fetching operators');
+      setLoadingOperators(false);
+    });
+  }
+  // Fetch operators based on user ID
+  useEffect(() => {
+    processdatatofilter()
+
+   
   }, []);
 
   // Initialize selected operators from localStorage
@@ -397,6 +403,7 @@ const OperatorEntry = () => {
       .post(`${URL}/save_operator_selection`, payload)
       .then((response) => {
         console.log('Operator selection saved:', response.data);
+        processdatatofilter()
       })
       .catch((error) => {
         console.error('Error saving operator selection:', error);
