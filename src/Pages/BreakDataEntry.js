@@ -124,50 +124,44 @@ import axios from 'axios';
 import { URL } from './URL.js';
 
 const BreakDataEntry = () => {
-  const [data, setData] = useState([]);
+  const [groupedData, setGroupedData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState(null);
-
-  // Available reasons for the dropdown
   const [reasonsList, setReasonsList] = useState([]);
+  const [selectedReasons, setSelectedReasons] = useState({});
+  const [savedReasons, setSavedReasons] = useState([]); // To store the reasons already saved
+  const [visibleMachines, setVisibleMachines] = useState({}); // For managing collapsibility of each machine
+
+  // Fetch available reasons
   useEffect(() => {
     const fetchReasons = async () => {
       try {
-        const response = await axios.get(`${URL}/get_reasons/${localStorage.getItem("ID")}`);
-        
-        // Ensure the response has the correct data structure
+        const response = await axios.get(`${URL}/get_reasons/${localStorage.getItem('ID')}`);
         if (response.data && Array.isArray(response.data.data)) {
-          // Map the reasons to label-value pairs
-          const fetchedReasons = response.data.data.map(reason => ({
+          const fetchedReasons = response.data.data.map((reason) => ({
             label: reason.reason,
             value: reason._id,
           }));
           setReasonsList(fetchedReasons);
         } else {
-          console.error('Unexpected response format for reasons:', response);
           setError('Unexpected response format when fetching reasons.');
         }
       } catch (err) {
-        console.error('Error fetching reasons:', err);
         setError('Error fetching reasons.');
       }
     };
-
     fetchReasons();
   }, []);
 
-
-
-  // Store selected reasons in a separate state
-  const [selectedReasons, setSelectedReasons] = useState({});
-
+  // Fetch data and group by device and channel
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${URL}/ONOff`);
-        const offData = response.data.data.filter(item => item.status === 'OFF');
-        setData(offData); // Set the filtered data
+        const offData = response.data.data.filter((item) => item.status === 'OFF');
+        const grouped = groupDataByDevice(offData);
+        setGroupedData(grouped);
         setLoading(false);
       } catch (err) {
         setError('Error fetching data');
@@ -175,10 +169,43 @@ const BreakDataEntry = () => {
       }
     };
 
+    const fetchSavedReasons = async () => {
+      try {
+        const response = await axios.get(`${URL}/get_save_off_reasons`);
+        setSavedReasons(response.data.data); // Store saved reasons
+      } catch (err) {
+        console.error('Error fetching saved reasons:', err);
+      }
+    };
+
     fetchData();
+    fetchSavedReasons();
   }, []);
 
-  // Handle dropdown selection changes for each row
+  // Group data by device and channel
+  const groupDataByDevice = (data) => {
+    return data.reduce((acc, item) => {
+      const machineKey = `Device ${item.deviceno} - ${item.channel.toUpperCase()}`;
+      if (!acc[machineKey]) {
+        acc[machineKey] = [];
+      }
+      acc[machineKey].push(item);
+      return acc;
+    }, {});
+  };
+
+  // Check if a reason is already saved for the given item
+  const isReasonSaved = (item) => {
+    return savedReasons.some(
+      (saved) =>
+        saved.deviceno === item.deviceno &&
+        saved.channel === item.channel &&
+        saved.shift === item.shift &&
+        saved.date === item.date
+    );
+  };
+
+  // Handle reason selection
   const handleReasonChange = (id, reason) => {
     setSelectedReasons((prev) => ({
       ...prev,
@@ -186,15 +213,15 @@ const BreakDataEntry = () => {
     }));
   };
 
+  // Handle save button action
   const handleSave = async () => {
     try {
-      // Prepare data with selected reasons
-      const dataWithReasons = data.map(item => ({
-        ...item,
-        reason: selectedReasons[item._id] || item.reason, // Use selected reason or existing one
-      }));
-
-      // Send POST request to save reasons
+      const dataWithReasons = Object.values(groupedData)
+        .flat()
+        .map((item) => ({
+          ...item,
+          reason: selectedReasons[item._id] || item.reason, // Use selected or existing reason
+        }));
       const response = await axios.post(`${URL}/save_off_reasons`, { reasons: dataWithReasons });
       if (response.status === 200) {
         setSaveStatus('Reasons saved successfully!');
@@ -204,6 +231,14 @@ const BreakDataEntry = () => {
     } catch (err) {
       setSaveStatus('Error saving reasons.');
     }
+  };
+
+  // Toggle visibility of each machine section
+  const toggleMachineVisibility = (machineKey) => {
+    setVisibleMachines((prevState) => ({
+      ...prevState,
+      [machineKey]: !prevState[machineKey],
+    }));
   };
 
   if (loading) {
@@ -224,63 +259,68 @@ const BreakDataEntry = () => {
       </button>
       {saveStatus && <div style={{ marginBottom: '10px' }}>{saveStatus}</div>}
 
-      {/* Data Table */}
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          marginTop: '10px',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={tableHeaderStyle}>Device No</th>
-            <th style={tableHeaderStyle}>Channel</th>
-            <th style={tableHeaderStyle}>Date</th>
-            <th style={tableHeaderStyle}>Time</th>
-            <th style={tableHeaderStyle}>Status</th>
-            <th style={tableHeaderStyle}>Shift</th>
-            <th style={tableHeaderStyle}>End Date</th>
-            <th style={tableHeaderStyle}>End Time</th>
-            <th style={tableHeaderStyle}>Reason</th> {/* New Column */}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item._id}>
-              <td style={tableCellStyle}>{item.deviceno}</td>
-              <td style={tableCellStyle}>{item.channel}</td>
-              <td style={tableCellStyle}>{item.date}</td>
-              <td style={tableCellStyle}>{item.time}</td>
-              <td style={tableCellStyle}>{item.status}</td>
-              <td style={tableCellStyle}>{item.shift}</td>
-              <td style={tableCellStyle}>{item.enddate}</td>
-              <td style={tableCellStyle}>{item.endtime}</td>
-              <td style={tableCellStyle}>
-                {/* Dropdown for selecting a reason */}
-                <select
-                value={selectedReasons[item._id] || item.reason || ''}
-                onChange={(e) => handleReasonChange(item._id, e.target.value)}
-              >
-                <option value="" disabled>Select Reason</option>
-                {reasonsList.map((reason) => (
-                  <option key={reason.value} value={reason.value}>
-                    {reason.label}
-                  </option>
+      {/* Render grouped data by machine and channel */}
+      {Object.keys(groupedData).map((machineKey) => (
+        <div key={machineKey}>
+          <h3
+            style={{ cursor: 'pointer' }}
+            onClick={() => toggleMachineVisibility(machineKey)}
+          >
+            {visibleMachines[machineKey] ? '▼' : '▶'} {machineKey}
+          </h3>
+          {visibleMachines[machineKey] && (
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr>
+                  <th style={tableHeaderStyle}>Device No</th>
+                  <th style={tableHeaderStyle}>Channel</th>
+                  <th style={tableHeaderStyle}>Date</th>
+                  <th style={tableHeaderStyle}>Time</th>
+                  <th style={tableHeaderStyle}>Status</th>
+                  <th style={tableHeaderStyle}>Shift</th>
+                  <th style={tableHeaderStyle}>End Date</th>
+                  <th style={tableHeaderStyle}>End Time</th>
+                  <th style={tableHeaderStyle}>Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupedData[machineKey].map((item) => (
+                  <tr key={item._id}>
+                    <td style={tableCellStyle}>{item.deviceno}</td>
+                    <td style={tableCellStyle}>{item.channel}</td>
+                    <td style={tableCellStyle}>{item.date}</td>
+                    <td style={tableCellStyle}>{item.time}</td>
+                    <td style={tableCellStyle}>{item.status}</td>
+                    <td style={tableCellStyle}>{item.shift}</td>
+                    <td style={tableCellStyle}>{item.enddate}</td>
+                    <td style={tableCellStyle}>{item.endtime}</td>
+                    <td style={tableCellStyle}>
+                      {/* Display saved reason or show dropdown if reason is not saved */}
+                      {isReasonSaved(item) ? (
+                        <span>{item.reason}</span> // Display saved reason
+                      ) : (
+                        <select
+                          value={selectedReasons[item._id] || item.reason || ''}
+                          onChange={(e) => handleReasonChange(item._id, e.target.value)}
+                        >
+                          <option value="" disabled>
+                            Select Reason
+                          </option>
+                          {reasonsList.map((reason) => (
+                            <option key={reason.value} value={reason.value}>
+                              {reason.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </td>
+                  </tr>
                 ))}
-              </select>
-              </td>
-            </tr>
-          ))}
-          {data.length === 0 && (
-            <tr>
-              <td colSpan="9" style={{ textAlign: 'center' }}>
-                No Data Found
-              </td>
-            </tr>
+              </tbody>
+            </table>
           )}
-        </tbody>
-      </table>
+        </div>
+      ))}
     </div>
   );
 };
