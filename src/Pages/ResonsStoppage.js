@@ -198,8 +198,7 @@
 //       </div>
 
 //       {/* Circular Progress Bars for each reason */}
-//   { 
-//       /* <div style={{ display: 'flex', flexWrap: 'wrap', gap: '120px', marginBottom: '20px' }}>
+//       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '120px', marginBottom: '20px' }}>
 //         {Object.keys(reasonPercentages).map((reason) => (
 //           <div key={reason} style={{ width: '100px', textAlign: 'center' }}>
 //             <CircularProgressbar
@@ -214,8 +213,7 @@
 //             <p> PERCENTAGE: {reasonPercentages[reason].toFixed(2)}</p>
 //           </div>
 //         ))}
-//       </div> */
-//   }
+//       </div>
 
 //       {/* Data Table */}
 //       <table
@@ -290,7 +288,6 @@
 // };
 
 // export default ReasonsStoppage;
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs'; // For date manipulation
@@ -305,7 +302,7 @@ dayjs.extend(customParseFormat);
 
 const ReasonsStoppage = () => {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [groupedData, setGroupedData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterDate, setFilterDate] = useState('');
@@ -320,7 +317,7 @@ const ReasonsStoppage = () => {
         const response = await axios.get(`${URL}/get_save_off_reasons`);
         console.log("Response data:", response.data.data); // Log the actual data for debugging
         setData(response.data.data); // Set the raw data
-        setFilteredData(response.data.data); // Initialize filteredData with all data
+        groupDataByDate(response.data.data); // Group data by date
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -357,60 +354,16 @@ const ReasonsStoppage = () => {
     return null;
   };
 
-  // Function to filter data and calculate the percentage for each reason
-  const filterData = () => {
-    let temp = data;
-
-    if (filterDate) {
-      const parsedDate = dayjs(filterDate).format('D/M/YY');
-      temp = temp.filter(item => item.date === parsedDate);
-    }
-
-    if (minTimeDifference > 0) {
-      temp = temp.filter(item => {
-        if (item.endTime) {
-          const diff = calculateTimeDifference(item.date, item.time, item.endDate, item.endTime);
-          if (diff === null) return false;
-
-          if (filterType === 'greater') {
-            return diff >= minTimeDifference;
-          } else if (filterType === 'less') {
-            return diff <= minTimeDifference;
-          }
-        }
-        return false;
-      });
-    }
-
-    setFilteredData(temp);
-    calculateReasonPercentages(temp);
-  };
-
-  // Calculate percentage of time difference for each reason
-  const calculateReasonPercentages = (filtered) => {
-    const reasonTimeDiff = {};
-    const reasonCount = {};
-
-    filtered.forEach(item => {
-      if (item.reason && item.endTime) {
-        const timeDifference = calculateTimeDifference(item.date, item.time, item.endDate, item.endTime);
-        if (timeDifference !== null) {
-          if (!reasonTimeDiff[item.reason]) {
-            reasonTimeDiff[item.reason] = 0;
-            reasonCount[item.reason] = 0;
-          }
-          reasonTimeDiff[item.reason] += timeDifference;
-          reasonCount[item.reason]++;
-        }
+  // Group data by date
+  const groupDataByDate = (data) => {
+    const grouped = data.reduce((acc, item) => {
+      if (!acc[item.date]) {
+        acc[item.date] = [];
       }
-    });
-
-    const percentages = {};
-    Object.keys(reasonTimeDiff).forEach(reason => {
-      percentages[reason] = (reasonTimeDiff[reason] / filtered.length) * 100;
-    });
-
-    setReasonPercentages(percentages);
+      acc[item.date].push(item);
+      return acc;
+    }, {});
+    setGroupedData(grouped);
   };
 
   // Handle changes in the date filter input
@@ -428,11 +381,6 @@ const ReasonsStoppage = () => {
   const handleFilterTypeChange = (e) => {
     setFilterType(e.target.value);
   };
-
-  // Apply filters whenever filterDate, minTimeDifference, filterType, or data changes
-  useEffect(() => {
-    filterData();
-  }, [filterDate, minTimeDifference, filterType, data]);
 
   // Rendering Logic
   if (loading) {
@@ -489,67 +437,57 @@ const ReasonsStoppage = () => {
         </div>
       </div>
 
-      {/* Display selected date above the table */}
-      {filterDate && (
-        <div style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 'bold' }}>
-          Data for {dayjs(filterDate).format('D/M/YY')}
+      {/* Render a table for each group of data (grouped by date) */}
+      {Object.keys(groupedData).map((date) => (
+        <div key={date} style={{ marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '10px' }}>Data for {dayjs(date).format('D/M/YY')}</h3>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={tableHeaderStyle}>Device No</th>
+                <th style={tableHeaderStyle}>Channel</th>
+                <th style={tableHeaderStyle}>Date</th>
+                <th style={tableHeaderStyle}>Time</th>
+                <th style={tableHeaderStyle}>End Time</th>
+                <th style={tableHeaderStyle}>End Date</th>
+                <th style={tableHeaderStyle}>Status</th>
+                <th style={tableHeaderStyle}>Shift</th>
+                <th style={tableHeaderStyle}>Time Difference (minutes)</th>
+                <th style={tableHeaderStyle}>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              {groupedData[date].map((item) => {
+                const timeDifference = item.endTime
+                  ? calculateTimeDifference(item.date, item.time, item.endDate, item.endTime)
+                  : null;
+
+                return (
+                  <tr key={item._id}>
+                    <td style={tableCellStyle}>{item.deviceNo}</td>
+                    <td style={tableCellStyle}>{item.channel}</td>
+                    <td style={tableCellStyle}>{item.date}</td>
+                    <td style={tableCellStyle}>{item.time}</td>
+                    <td style={tableCellStyle}>{item.endTime || 'N/A'}</td>
+                    <td style={tableCellStyle}>{item.endDate || 'N/A'}</td>
+                    <td style={tableCellStyle}>{item.status}</td>
+                    <td style={tableCellStyle}>{item.shift}</td>
+                    <td style={tableCellStyle}>
+                      {timeDifference !== null ? timeDifference.toFixed(2) : 'Running'}
+                    </td>
+                    <td style={tableCellStyle}>{item.reason || 'N/A'}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      )}
-
-      {/* Data Table */}
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={tableHeaderStyle}>Device No</th>
-            <th style={tableHeaderStyle}>Channel</th>
-            <th style={tableHeaderStyle}>Date</th>
-            <th style={tableHeaderStyle}>Time</th>
-            <th style={tableHeaderStyle}>End Time</th>
-            <th style={tableHeaderStyle}>End Date</th>
-            <th style={tableHeaderStyle}>Status</th>
-            <th style={tableHeaderStyle}>Shift</th>
-            <th style={tableHeaderStyle}>Time Difference (minutes)</th>
-            <th style={tableHeaderStyle}>Reason</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((item) => {
-              const timeDifference = item.endTime
-                ? calculateTimeDifference(item.date, item.time, item.endDate, item.endTime)
-                : null;
-
-              return (
-                <tr key={item._id}>
-                  <td style={tableCellStyle}>{item.deviceNo}</td>
-                  <td style={tableCellStyle}>{item.channel}</td>
-                  <td style={tableCellStyle}>{item.date}</td>
-                  <td style={tableCellStyle}>{item.time}</td>
-                  <td style={tableCellStyle}>{item.endTime || 'N/A'}</td>
-                  <td style={tableCellStyle}>{item.endDate || 'N/A'}</td>
-                  <td style={tableCellStyle}>{item.status}</td>
-                  <td style={tableCellStyle}>{item.shift}</td>
-                  <td style={tableCellStyle}>
-                    {timeDifference !== null ? timeDifference.toFixed(2) : 'Running'}
-                  </td>
-                  <td style={tableCellStyle}>{item.reason || 'N/A'}</td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan="10" style={{ textAlign: 'center', padding: '10px' }}>
-                No Data Found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      ))}
     </div>
   );
 };
