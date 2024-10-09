@@ -34,7 +34,7 @@ function App() {
   // Helper function to calculate percentages
   const calculatePercentages = (run_time, shift_time, average, average_threshold) => {
     console.log("Calculating Percentages:", { run_time, shift_time, average, average_threshold }); // Debugging
-    const runPercentage = shift_time > 0 ? ((run_time * 60)/ shift_time) * 100 : 0;
+    const runPercentage = shift_time > 0 ? (run_time / shift_time) * 100 : 0;
     const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
     return [runPercentage, averagePercentage];
   };
@@ -212,23 +212,25 @@ function App() {
         </div>
 
         {/* Modal for machine details */}
-        <Modal 
-          title={`Details for Device ${selectedMachine?.machineNumber} - ${selectedMachine?.channel.toUpperCase()} - ${selectedMachine?.shift.charAt(0).toUpperCase() + selectedMachine?.shift.slice(1)} Shift`} 
-          visible={isModalVisible} 
-          onOk={handleOk} 
-          onCancel={handleCancel}
-          okText="Close"
-        >
-          {selectedMachine && (
-            <div>
-              <p><strong>Device {selectedMachine?.machineNumber}</strong></p>
-              <p>Channel: {selectedMachine?.channel.toUpperCase()}</p>
-              <p>Shift: {selectedMachine?.shift?.charAt(0)?.toUpperCase() + selectedMachine?.shift?.slice(1)}</p>
-              <p>Run Time Percentage: {selectedMachine?.percentage?.toFixed(2)}%</p>
-              <p>Average {selectedMachine}</p>
-            </div>
-          )}
-        </Modal>
+       {
+        //  <Modal 
+        //   title={`Details for Device ${selectedMachine?.machineNumber} - ${selectedMachine?.channel.toUpperCase()} - ${selectedMachine?.shift.charAt(0).toUpperCase() + selectedMachine?.shift.slice(1)} Shift`} 
+        //   visible={isModalVisible} 
+        //   onOk={handleOk} 
+        //   onCancel={handleCancel}
+        //   okText="Close"
+        // >
+        //   {selectedMachine && (
+        //     <div>
+        //       <p><strong>Device {selectedMachine?.machineNumber}</strong></p>
+        //       <p>Channel: {selectedMachine?.channel.toUpperCase()}</p>
+        //       <p>Shift: {selectedMachine?.shift?.charAt(0)?.toUpperCase() + selectedMachine?.shift?.slice(1)}</p>
+        //       <p>Run Time Percentage: {selectedMachine?.percentage?.toFixed(2)}%</p>
+        //       <p>Average {selectedMachine}</p>
+        //     </div>
+        //   )}
+        // </Modal>
+      }
       </div>
     </div>
   );
