@@ -34,12 +34,8 @@ function App() {
   // Helper function to calculate percentages
   const calculatePercentages = (run_time, shift_time, average, average_threshold) => {
     console.log("Calculating Percentages:", { run_time, shift_time, average, average_threshold }); // Debugging
-  
-    // Convert run_time from hours to minutes if needed
-    const runTimeInMinutes = run_time * 60; // If run_time is in hours
-    const runPercentage = shift_time > 0 ? (runTimeInMinutes / shift_time) * 100 : 0;
+    const runPercentage = shift_time > 0 ? ((run_time * 60)/ shift_time) * 100 : 0;
     const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
-    
     return [runPercentage, averagePercentage];
   };
 
@@ -61,8 +57,8 @@ function App() {
                 average: channel[shift].average,
                 average_threshold: channel[shift].average_threshold,
                 percentages: calculatePercentages(
-                  channel[shift].run_time,    // Assuming run_time is in hours, it will be converted to minutes
-                  shiftTimeInHours * 60,      // Ensure shift time is also in minutes for comparison
+                  channel[shift].run_time,
+                  shiftTimeInHours,
                   channel[shift].average,
                   channel[shift].average_threshold
                 )
