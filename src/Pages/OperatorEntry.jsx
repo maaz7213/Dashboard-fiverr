@@ -1,3 +1,4 @@
+
 // import React, { useEffect, useState } from 'react';
 // import { URL } from './URL.js';
 // import axios from 'axios';
@@ -7,7 +8,7 @@
 //   const [machineData, setMachineData] = useState({});
 //   const [data, setData] = useState([]);
 
-//   // State for operatorsA
+//   // State for operators
 //   const [operators, setOperators] = useState([]);
 //   const [loadingOperators, setLoadingOperators] = useState(true);
 //   const [errorOperators, setErrorOperators] = useState(null);
@@ -23,20 +24,22 @@
 //       .then((response) => {
 //         console.log('API response:', response.data); // Debugging: Log the entire API response
 //         setData(response.data.message);
-//         setLoading(false); // Set the data fetched from the server
+//         setLoading(false); // Data fetched successfully
 //       })
 //       .catch((error) => {
 //         console.error('Error fetching device IDs:', error);
+//         setLoading(false); // Stop loading even if there's an error
 //       });
 //   }, []);
 
-//   // Process machine data
+//   // Process machine data to include channel information
 //   useEffect(() => {
 //     const processedData = {};
 
 //     data.forEach((machine) => {
-//       // Loop through each channel in the machine
+//       // Loop through each key in the machine object
 //       Object.keys(machine).forEach((key) => {
+//         // Identify channel keys (e.g., 'ch1', 'ch2', etc.)
 //         if (key.startsWith('ch')) {
 //           const channelData = machine[key];
 //           const machineKey = `Device ${machine.deviceno} - ${key.toUpperCase()}`;
@@ -45,15 +48,16 @@
 //             processedData[machineKey] = [];
 //           }
 
-//           // Loop through each shift (morning, evening, night) in the channel
+//           // Loop through each shift within the channel
 //           Object.keys(channelData).forEach((shiftKey) => {
 //             const shiftData = channelData[shiftKey];
 //             processedData[machineKey].push({
 //               shift: shiftKey,
+//               channel: key, // **Include channel information**
 //               ...shiftData,
-//               currentdate: machine.currentdate, // Add additional machine-level data as needed
+//               currentdate: machine.currentdate,
 //               deviceno: machine.deviceno,
-//               _id: machine._id || `${machine.deviceno}_${shiftKey}_${machine.currentdate}`, // Fallback _id if missing
+//               _id: machine._id || `${machine.deviceno}_${shiftKey}_${machine.currentdate}`, // Fallback _id
 //             });
 //           });
 //         }
@@ -64,19 +68,27 @@
 //     setMachineData(processedData);
 //   }, [data]);
 
-//   // Fetch operators
+//   // Fetch operators based on user ID
 //   useEffect(() => {
+//     const userId = localStorage.getItem('ID');
+//     if (!userId) {
+//       console.error('User ID not found in localStorage.');
+//       setErrorOperators('User ID not found.');
+//       setLoadingOperators(false);
+//       return;
+//     }
+
 //     axios
-//       .get(`${URL}/get_operators_by_userid/${localStorage.getItem('ID')}`)
+//       .get(`${URL}/get_operators_by_userid/${userId}`)
 //       .then((response) => {
 //         console.log('Operators fetched:', response.data.operators); // Debugging: Log the operators data
-//         setOperators(response.data.operators); // Set the operators data
-//         setLoadingOperators(false); // Stop loading
+//         setOperators(response.data.operators);
+//         setLoadingOperators(false);
 //       })
 //       .catch((err) => {
 //         console.error('Error fetching operators:', err);
 //         setErrorOperators('Error fetching operators');
-//         setLoadingOperators(false); // Stop loading in case of error
+//         setLoadingOperators(false);
 //       });
 //   }, []);
 
@@ -88,7 +100,7 @@
 //     }
 //   }, []);
 
-//   // Function to handle operator change
+//   // Handle operator selection changes
 //   const handleOperatorChange = (uniqueKey, operatorId, item) => {
 //     setSelectedOperators((prevState) => {
 //       const newState = {
@@ -97,17 +109,18 @@
 //       };
 //       localStorage.setItem('selectedOperators', JSON.stringify(newState));
 
-//       // Make API call to save the data with operator
+//       // Save the operator selection to the server
 //       saveOperatorSelection(item, operatorId);
 
 //       return newState;
 //     });
 //   };
 
-//   // Function to save operator selection to the server
+//   // Save operator selection to the server
 //   const saveOperatorSelection = (item, operatorId) => {
+
+
 //     const payload = {
-//       _id: item._id,
 //       deviceno: item.deviceno,
 //       channel: item.channel || 'unknown', // Ensure channel is available
 //       date: item.currentdate,
@@ -127,10 +140,10 @@
 //       });
 //   };
 
-//   // State to manage the visibility of each machine's table
+//   // Manage visibility of each machine's table
 //   const [visibleMachines, setVisibleMachines] = useState({});
 
-//   // Toggle function for machine visibility
+//   // Toggle machine table visibility
 //   const toggleMachineVisibility = (machineKey) => {
 //     setVisibleMachines((prevState) => ({
 //       ...prevState,
@@ -138,7 +151,7 @@
 //     }));
 //   };
 
-//   // Common table headers
+//   // Define table headers
 //   const tableHeaders = (
 //     <thead>
 //       <tr>
@@ -152,9 +165,9 @@
 //     </thead>
 //   );
 
-//   // Helper function to format time
+//   // Format time strings
 //   const formatTime = (timeStr) => {
-//     if (typeof timeStr !== 'string' || !timeStr) return 'Running'; // Check if it's a valid string
+//     if (typeof timeStr !== 'string' || !timeStr) return 'Running'; // Default value
 //     const parts = timeStr.split(':').map((part) => part.padStart(2, '0'));
 //     return parts.join(':');
 //   };
@@ -162,6 +175,7 @@
 //   if (loading) {
 //     return <div>Loading data...</div>;
 //   }
+
 //   return (
 //     <div className="operator-entry">
 //       <h2>OPERATOR ENTRY</h2>
@@ -171,17 +185,19 @@
 //             <h3
 //               className="machine-header"
 //               onClick={() => toggleMachineVisibility(machineKey)}
+//               style={{ cursor: 'pointer' }}
 //             >
-//               {visibleMachines[machineKey] ? 'v' : '>'} {machineKey}
+//               {visibleMachines[machineKey] ? '▼' : '▶'} {machineKey}
 //             </h3>
 //             {visibleMachines[machineKey] && (
 //               <table className="machine-table">
 //                 {tableHeaders}
 //                 <tbody>
 //                   {machineData[machineKey].map((item, index) => {
-//                     const uniqueKey = `${machineKey}_${index}`;
+//                     // Create a unique key that includes channel and shift to avoid duplicates
+//                     const uniqueKey = `${machineKey}_${item.shift}_${item.channel}_${index}`;
 //                     return (
-//                       <tr key={index}>
+//                       <tr key={uniqueKey}>
 //                         <td>{item.currentdate}</td>
 //                         <td>{item.shift}</td>
 //                         <td>{formatTime(item.shift_time)}</td>
@@ -236,8 +252,7 @@ import './OperatorEntry.css';
 const OperatorEntry = () => {
   const [machineData, setMachineData] = useState({});
   const [data, setData] = useState([]);
-
-  // State for operators
+  const [operatorSelections, setOperatorSelections] = useState([]); // Store selections from get_operator_selections API
   const [operators, setOperators] = useState([]);
   const [loadingOperators, setLoadingOperators] = useState(true);
   const [errorOperators, setErrorOperators] = useState(null);
@@ -246,29 +261,40 @@ const OperatorEntry = () => {
   // State for selected operators
   const [selectedOperators, setSelectedOperators] = useState({});
 
-  // Fetch machine data
+  // Fetch machine data from shiftwise API
   useEffect(() => {
     axios
       .get(`${URL}/shiftwise`)
       .then((response) => {
-        console.log('API response:', response.data); // Debugging: Log the entire API response
+        console.log('Shiftwise API response:', response.data);
         setData(response.data.message);
-        setLoading(false); // Data fetched successfully
+        setLoading(false);
       })
       .catch((error) => {
-        console.error('Error fetching device IDs:', error);
-        setLoading(false); // Stop loading even if there's an error
+        console.error('Error fetching shiftwise data:', error);
+        setLoading(false);
       });
   }, []);
 
-  // Process machine data to include channel information
+  // Fetch operator selections from get_operator_selections API
+  useEffect(() => {
+    axios
+      .get(`${URL}/get_operator_selections`)
+      .then((response) => {
+        console.log('Operator selections:', response.data.data);
+        setOperatorSelections(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching operator selections:', error);
+      });
+  }, []);
+
+  // Process machine data to include channel and shift information
   useEffect(() => {
     const processedData = {};
 
     data.forEach((machine) => {
-      // Loop through each key in the machine object
       Object.keys(machine).forEach((key) => {
-        // Identify channel keys (e.g., 'ch1', 'ch2', etc.)
         if (key.startsWith('ch')) {
           const channelData = machine[key];
           const machineKey = `Device ${machine.deviceno} - ${key.toUpperCase()}`;
@@ -277,17 +303,27 @@ const OperatorEntry = () => {
             processedData[machineKey] = [];
           }
 
-          // Loop through each shift within the channel
           Object.keys(channelData).forEach((shiftKey) => {
             const shiftData = channelData[shiftKey];
-            processedData[machineKey].push({
-              shift: shiftKey,
-              channel: key, // **Include channel information**
-              ...shiftData,
-              currentdate: machine.currentdate,
-              deviceno: machine.deviceno,
-              _id: machine._id || `${machine.deviceno}_${shiftKey}_${machine.currentdate}`, // Fallback _id
-            });
+            const selectionExists = operatorSelections.some(
+              (selection) =>
+                selection.deviceno === machine.deviceno &&
+                selection.channel === key &&
+                selection.shift === shiftKey &&
+                selection.date === machine.currentdate
+            );
+
+            // Only include shift if it's not already in operator selections
+            if (!selectionExists) {
+              processedData[machineKey].push({
+                shift: shiftKey,
+                channel: key,
+                ...shiftData,
+                currentdate: machine.currentdate,
+                deviceno: machine.deviceno,
+                _id: machine._id || `${machine.deviceno}_${shiftKey}_${machine.currentdate}`,
+              });
+            }
           });
         }
       });
@@ -295,7 +331,7 @@ const OperatorEntry = () => {
 
     console.log('Processed machine data:', processedData); // Debugging: Log the processed machine data
     setMachineData(processedData);
-  }, [data]);
+  }, [data, operatorSelections]);
 
   // Fetch operators based on user ID
   useEffect(() => {
@@ -310,7 +346,7 @@ const OperatorEntry = () => {
     axios
       .get(`${URL}/get_operators_by_userid/${userId}`)
       .then((response) => {
-        console.log('Operators fetched:', response.data.operators); // Debugging: Log the operators data
+        console.log('Operators fetched:', response.data.operators);
         setOperators(response.data.operators);
         setLoadingOperators(false);
       })
@@ -347,17 +383,15 @@ const OperatorEntry = () => {
 
   // Save operator selection to the server
   const saveOperatorSelection = (item, operatorId) => {
-
-
     const payload = {
       deviceno: item.deviceno,
-      channel: item.channel || 'unknown', // Ensure channel is available
+      channel: item.channel || 'unknown',
       date: item.currentdate,
       shift: item.shift,
       operatorId: operatorId,
     };
 
-    console.log('Saving operator selection:', payload); // Debugging: Log the payload
+    console.log('Saving operator selection:', payload);
 
     axios
       .post(`${URL}/save_operator_selection`, payload)
@@ -396,7 +430,7 @@ const OperatorEntry = () => {
 
   // Format time strings
   const formatTime = (timeStr) => {
-    if (typeof timeStr !== 'string' || !timeStr) return 'Running'; // Default value
+    if (typeof timeStr !== 'string' || !timeStr) return 'Running';
     const parts = timeStr.split(':').map((part) => part.padStart(2, '0'));
     return parts.join(':');
   };
@@ -423,7 +457,6 @@ const OperatorEntry = () => {
                 {tableHeaders}
                 <tbody>
                   {machineData[machineKey].map((item, index) => {
-                    // Create a unique key that includes channel and shift to avoid duplicates
                     const uniqueKey = `${machineKey}_${item.shift}_${item.channel}_${index}`;
                     return (
                       <tr key={uniqueKey}>
