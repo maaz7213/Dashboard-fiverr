@@ -258,16 +258,12 @@ const OperatorEntry = () => {
   const [errorOperators, setErrorOperators] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // State for selected operators to be saved
+  // State for selected operators
   const [selectedOperators, setSelectedOperators] = useState({});
 
-  // State for saving process
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(null);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-
   // Fetch machine data from shiftwise API
-  useEffect(() => {
+  const fetchMachineData = () => {
+    setLoading(true);
     axios
       .get(`${URL}/shiftwise`)
       .then((response) => {
@@ -279,10 +275,10 @@ const OperatorEntry = () => {
         console.error('Error fetching shiftwise data:', error);
         setLoading(false);
       });
-  }, []);
+  };
 
   // Fetch operator selections from get_operator_selections API
-  useEffect(() => {
+  const fetchOperatorSelections = () => {
     axios
       .get(`${URL}/get_operator_selections`)
       .then((response) => {
@@ -292,6 +288,11 @@ const OperatorEntry = () => {
       .catch((error) => {
         console.error('Error fetching operator selections:', error);
       });
+  };
+
+  useEffect(() => {
+    fetchMachineData();
+    fetchOperatorSelections();
   }, []);
 
   // Process machine data to include channel and shift information
@@ -338,8 +339,7 @@ const OperatorEntry = () => {
     setMachineData(processedData);
   }, [data, operatorSelections]);
 
-  // Fetch operators based on user ID
-  useEffect(() => {
+  const processdatatofilter = () => {
     const userId = localStorage.getItem('ID');
     if (!userId) {
       console.error('User ID not found in localStorage.');
@@ -347,7 +347,6 @@ const OperatorEntry = () => {
       setLoadingOperators(false);
       return;
     }
-
     axios
       .get(`${URL}/get_operators_by_userid/${userId}`)
       .then((response) => {
@@ -360,7 +359,7 @@ const OperatorEntry = () => {
         setErrorOperators('Error fetching operators');
         setLoadingOperators(false);
       });
-  }, []);
+  };
 
   // Initialize selected operators from localStorage
   useEffect(() => {
@@ -375,17 +374,19 @@ const OperatorEntry = () => {
     setSelectedOperators((prevState) => {
       const newState = {
         ...prevState,
-        [uniqueKey]: { operatorId, item },
+        [uniqueKey]: operatorId,
       };
       localStorage.setItem('selectedOperators', JSON.stringify(newState));
-      setSaveSuccess(false); // Reset success message on change
-      setSaveError(null); // Reset error message on change
+
+      // Save the operator selection to the server
+      saveOperatorSelection(item, operatorId);
+
       return newState;
     });
   };
 
   // Save operator selection to the server
-  const saveOperatorSelection = async (item, operatorId) => {
+  const saveOperatorSelection = (item, operatorId) => {
     const payload = {
       deviceno: item.deviceno,
       channel: item.channel || 'unknown',
@@ -396,61 +397,15 @@ const OperatorEntry = () => {
 
     console.log('Saving operator selection:', payload);
 
-    try {
-      const response = await axios.post(`${URL}/save_operator_selection`, payload);
-      console.log('Operator selection saved:', response.data);
-      return { success: true, data: response.data };
-    } catch (error) {
-      console.error('Error saving operator selection:', error);
-      return { success: false, error };
-    }
-  };
-
-  // Save all selected operator selections
-  const saveAllSelections = async () => {
-    if (Object.keys(selectedOperators).length === 0) {
-      alert('No operator selections to save.');
-      return;
-    }
-
-    setSaving(true);
-    setSaveError(null);
-    setSaveSuccess(false);
-
-    const savePromises = Object.entries(selectedOperators).map(async ([uniqueKey, selection]) => {
-      const { operatorId, item } = selection;
-      if (item) {
-        return saveOperatorSelection(item, operatorId);
-      } else {
-        console.warn(`No item data found for key: ${uniqueKey}`);
-        return { success: false, error: 'No item data' };
-      }
-    });
-
-    // Wait for all save operations to complete
-    const results = await Promise.all(savePromises);
-
-    // Check if any save operations failed
-    const hasError = results.some((result) => !result.success);
-
-    if (hasError) {
-      setSaveError('Some operator selections could not be saved. Please try again.');
-    } else {
-      setSaveSuccess(true);
-      // Clear selectedOperators
-      setSelectedOperators({});
-      localStorage.removeItem('selectedOperators');
-
-      // Refetch operator selections to update the tables
-      try {
-        const response = await axios.get(`${URL}/get_operator_selections`);
-        setOperatorSelections(response.data.data);
-      } catch (error) {
-        console.error('Error refetching operator selections:', error);
-      }
-    }
-
-    setSaving(false);
+    axios
+      .post(`${URL}/save_operator_selection`, payload)
+      .then((response) => {
+        console.log('Operator selection saved:', response.data);
+        processdatatofilter();
+      })
+      .catch((error) => {
+        console.error('Error saving operator selection:', error);
+      });
   };
 
   // Manage visibility of each machine's table
@@ -485,32 +440,23 @@ const OperatorEntry = () => {
     return parts.join(':');
   };
 
-  if (loading || loadingOperators) {
+  if (loading) {
     return <div>Loading data...</div>;
   }
 
   return (
     <div className="operator-entry">
       <h2>OPERATOR ENTRY</h2>
-
-      {/* Save All Selections Button */}
+      
+      {/* Refresh Data Button */}
       <div style={{ marginBottom: '20px' }}>
-        <button
-          onClick={saveAllSelections}
-          disabled={saving || Object.keys(selectedOperators).length === 0}
-        >
-          {saving ? 'Saving...' : 'Save All'}
+        <button onClick={() => {
+          fetchMachineData();
+          fetchOperatorSelections();
+          processdatatofilter();
+        }}>
+          Refresh Data
         </button>
-        {saveSuccess && (
-          <span style={{ color: 'green', marginLeft: '10px' }}>
-            Selections saved successfully!
-          </span>
-        )}
-        {saveError && (
-          <span style={{ color: 'red', marginLeft: '10px' }}>
-            {saveError}
-          </span>
-        )}
       </div>
 
       {machineData &&
@@ -537,19 +483,25 @@ const OperatorEntry = () => {
                         <td>{item.run_time}</td>
                         <td>{item.working_time}</td>
                         <td>
-                          <select
-                            value={selectedOperators[uniqueKey]?.operatorId || ''}
-                            onChange={(e) =>
-                              handleOperatorChange(uniqueKey, e.target.value, item)
-                            }
-                          >
-                            <option value="">Select Operator</option>
-                            {operators.map((operator) => (
-                              <option key={operator.id} value={operator.id}>
-                                {operator.name}
-                              </option>
-                            ))}
-                          </select>
+                          {loadingOperators ? (
+                            <span>Loading operators...</span>
+                          ) : errorOperators ? (
+                            <span>{errorOperators}</span>
+                          ) : (
+                            <select
+                              value={selectedOperators[uniqueKey] || ''}
+                              onChange={(e) =>
+                                handleOperatorChange(uniqueKey, e.target.value, item)
+                              }
+                            >
+                              <option value="">Select Operator</option>
+                              {operators.map((operator) => (
+                                <option key={operator.id} value={operator.id}>
+                                  {operator.name}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </td>
                       </tr>
                     );
@@ -569,7 +521,5 @@ const OperatorEntry = () => {
     </div>
   );
 };
-
-// Styles for table headers and cells can be managed in OperatorEntry.css
 
 export default OperatorEntry;
