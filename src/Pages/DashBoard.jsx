@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd'; // Ant Design's Modal component
 import BarChartPlaceholder from '../Components/BarChartPlaceholder';
@@ -142,7 +141,7 @@ function App() {
   return (
     <div className="App">
       <div className="dashboard-container">
-        
+
         {/* Main Content */}
         <div className="main-content">
           {/* Header */}
@@ -153,7 +152,7 @@ function App() {
             setSelectedShift={setSelectedShift}
           />
 
-          
+
           {/* Progress Circles Section */}
           <div className="progress-section">
   {dataToDisplay?.map((device, deviceIndex) => (
@@ -168,18 +167,9 @@ function App() {
 
             // Only render the selected shift or all shifts if 'all' is selected
             if (selectedShift !== 'all' && shift !== selectedShift) return null;
-            // const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
-            const convertTimeToMinutes = (timeStr) => {
-              if (typeof timeStr === 'string' && timeStr.includes(':')) {
-                const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-                return hours * 60 + minutes + (seconds ? seconds / 60 : 0); // Convert seconds to minutes
-              }
-              return 0; // Default to 0 if timeStr is not a valid format
-            };
-            
-            // Convert shift_time and run_time to minutes
-          
-            
+
+            const [runPercentage, averagePercentage] = shiftData.percentages;
+
             return (
               <div
                 key={shift}
@@ -193,7 +183,8 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftTimeInMinutes} min</p>
+                <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
+                <p>Run Time: {shiftData.run_time} hours ({runPercentage.toFixed(2)}%)</p>
                 <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
                 <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
@@ -205,7 +196,7 @@ function App() {
   ))}
 </div>
 
-        
+
           {/* Bar Chart Section */}
           <div className="bar-chart-section">
            {shiftData && shiftData.length > 0 ? (
@@ -220,7 +211,7 @@ function App() {
           </div>
         </div>
 
-       
+        
       </div>
     </div>
   );
@@ -251,7 +242,7 @@ const Header = ({ selectedDate, setSelectedDate, selectedShift, setSelectedShift
             Yesterday
           </button>
         </div>
-        
+
         {/* Shift Controls */}
         <div className="shift-controls">
           <button 
