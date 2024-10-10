@@ -168,9 +168,25 @@ function App() {
 
             // Only render the selected shift or all shifts if 'all' is selected
             if (selectedShift !== 'all' && shift !== selectedShift) return null;
+            // const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
+            // const [runPercentage, averagePercentage] = shiftData.percentages;
+            const convertTimeToMinutes = (timeStr) => {
+              if (typeof timeStr === 'string' && timeStr.includes(':')) {
+                const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes + (seconds ? seconds / 60 : 0); // Convert seconds to minutes
+              }
+              return 0; // Default to 0 if timeStr is not a valid format
+            };
+            
+            // Convert shift_time and run_time to minutes
+            const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
+            const runTimeInMinutes = convertTimeToMinutes(shiftData.run_time);
+           
+            const runPercentagetOShow = shiftTimeInMinutes > 0
+            ? (shiftData.run_time / shiftTimeInMinutes) * 100
+            : 0;
 
-            const [runPercentage, averagePercentage] = shiftData.percentages;
-
+          const averagePercentagetoshow = (shiftData.average / shiftData.average_threshold) * 100 || 0;
             return (
               <div
                 key={shift}
@@ -181,12 +197,12 @@ function App() {
                 <CircularProgress
                   size={150}
                   strokeWidth={10}
-                  percentages={[runPercentage, averagePercentage]}
+                  percentages={[runPercentagetOShow, averagePercentagetoshow]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
                 <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
-                <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
-                <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
+                <p>Run Time: {shiftData.run_time} minutes ({averagePercentagetoshow.toFixed(2)}%)</p>
+                <p>Average: {shiftData.average} ({averagePercentagetoshow.toFixed(2)}%)</p>
               </div>
             );
           })}
