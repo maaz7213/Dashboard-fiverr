@@ -186,6 +186,8 @@ function App() {
               ? (shiftData.run_time / shiftTimeInMinutes) * 100
               : 0;
 
+              console.log(runPercentage);
+
             const averagePercentage = (shiftData.average / shiftData.average_threshold) * 100 || 0;
             
             return (
@@ -201,7 +203,7 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftTimeInMinutes} min</p>
+                <p>Shift Duration: {shiftData.shift_time} hours</p>
                 <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
                 <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
