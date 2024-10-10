@@ -178,17 +178,7 @@ function App() {
             };
             
             // Convert shift_time and run_time to minutes
-            const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
-            const runTimeInMinutes = convertTimeToMinutes(shiftData.run_time);
-
-            // Calculate runPercentage
-            const runPercentage = shiftTimeInMinutes > 0
-              ? (shiftData.run_time / shiftTimeInMinutes) * 100
-              : 0;
-
-              console.log(runPercentage);
-
-            const averagePercentage = (shiftData.average / shiftData.average_threshold) * 100 || 0;
+          
             
             return (
               <div
@@ -203,7 +193,7 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftData.shift_time} hours</p>
+                <p>Shift Duration: {shiftTimeInMinutes} min</p>
                 <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
                 <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>

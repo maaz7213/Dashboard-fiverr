@@ -283,17 +283,19 @@ const MWReport = () => {
                         }
                         return 0; // Default to 0 if timeStr is not a valid format
                       };
-                      
+                
                       // Convert shift_time and run_time to minutes
                       const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
                       const runTimeInMinutes = convertTimeToMinutes(shiftData.run_time);
-  
+                      console.log(shiftData.run_time);
                       // Calculate runPercentage
                       const runPercentage = shiftTimeInMinutes > 0
                         ? (shiftData.run_time / shiftTimeInMinutes) * 100
                         : 0;
-  
+                
+                      // Calculate averagePercentage
                       const averagePercentage = (shiftData.average / shiftData.average_threshold) * 100 || 0;
+                
   
                       return (
                         <div key={shift} className="shift-section">
@@ -301,20 +303,14 @@ const MWReport = () => {
                             {shift.charAt(0).toUpperCase() + shift.slice(1)} Shift
                           </h4>
                           <CircularProgress
-                            size={150}
-                            strokeWidth={10}
-                            percentages={[runPercentage, averagePercentage]}
-                            colors={['#f94144', '#f8961e', '#43aa8b']}
-                          />
-                          <p>
-                            Shift Duration: {shiftTimeInMinutes || 'N/A'}
-                          </p>
-                          <p>
-                            Run Time: {shiftData.run_time || 'N/A'} ({runPercentage.toFixed(2)}%)
-                          </p>
-                          <p>
-                            Average: {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)
-                          </p>
+                          size={150}
+                          strokeWidth={10}
+                          percentages={[runPercentage, averagePercentage]}
+                          colors={["#f94144", "#f8961e", "#43aa8b"]}
+                        />
+                          <p>Shift Duration: {shiftTimeInMinutes || 'N/A'} min</p>
+                          <p>Run Time: {shiftData.run_time || 'N/A'} minutes ({runPercentage.toFixed(2)}%)</p>
+                          <p>Average: {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)</p>
                         </div>
                       );
                     })}
