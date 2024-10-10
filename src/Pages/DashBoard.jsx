@@ -74,7 +74,7 @@ function App() {
                 average_threshold: channel[shift].average_threshold,
                 percentages: calculatePercentages(
                   channel[shift].run_time,
-                  shiftTimeInHours,
+                  channel[shift].shift_time,
                   channel[shift].average,
                   channel[shift].average_threshold
                 )
