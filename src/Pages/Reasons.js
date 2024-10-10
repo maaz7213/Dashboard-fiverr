@@ -160,8 +160,7 @@
 //   );
 // }
 
-// export default Reasons;
-import React, { useState, useEffect } from "react";
+// export default Reasons;import React, { useState, useEffect } from "react";
 import axios from "axios"; // For API calls
 import { useNavigate } from "react-router-dom";
 import './reasons.css'; // We'll create this CSS file next
@@ -279,6 +278,21 @@ const Reasons = () => {
     setEditId(reasonItem._id); // Store the ID of the item being edited
   };
 
+  // Handle delete button click
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this reason?");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`${URL}/reasons/${id}`);
+        setReasonsList((prevReasons) => prevReasons.filter((item) => item._id !== id));
+        setSuccess(true);
+      } catch (err) {
+        setError('Failed to delete the reason.');
+        console.error('Error:', err);
+      }
+    }
+  };
+
   // Handle cancel button click
   const handleCancel = () => {
     setShowForm(false);
@@ -304,6 +318,7 @@ const Reasons = () => {
                   <strong>Additional Details:</strong> {reasonItem.additionalDetails}
                 </div>
                 <button onClick={() => handleEdit(reasonItem)}>Edit</button>
+                <button onClick={() => handleDelete(reasonItem._id)}>Delete</button>
               </li>
             ))}
           </ul>
