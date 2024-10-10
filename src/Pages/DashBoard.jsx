@@ -191,7 +191,7 @@ function App() {
               <div
                 key={shift}
                 className="shift-section"
-                onClick={() => showModal(device.deviceNo, channelKey, shift, runPercentage)}
+                onClick={() => showModal(device.deviceNo, channelKey, shift, runPercentagetOShow)}
               >
                 <h4>{shift.charAt(0).toUpperCase() + shift.slice(1)} Shift</h4>
                 <CircularProgress
