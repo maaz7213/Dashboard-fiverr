@@ -303,14 +303,20 @@ const MWReport = () => {
                             {shift.charAt(0).toUpperCase() + shift.slice(1)} Shift
                           </h4>
                           <CircularProgress
-                          size={150}
-                          strokeWidth={10}
-                          percentages={[runPercentage, averagePercentage]}
-                          colors={["#f94144", "#f8961e", "#43aa8b"]}
-                        />
-                          <p>Shift Duration: {shiftTimeInMinutes || 'N/A'} min</p>
-                          <p>Run Time: {shiftData.run_time || 'N/A'} minutes ({runPercentage.toFixed(2)}%)</p>
-                          <p>Average: {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)</p>
+                            size={150}
+                            strokeWidth={10}
+                            percentages={[runPercentage, averagePercentage]}
+                            colors={['#f94144', '#f8961e', '#43aa8b']}
+                          />
+                          <p>
+                            Shift Duration: {shiftTimeInMinutes || 'N/A'}
+                          </p>
+                          <p>
+                            Run Time: {shiftData.run_time || 'N/A'} ({runPercentage.toFixed(2)}%)
+                          </p>
+                          <p>
+                            Average: {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)
+                          </p>
                         </div>
                       );
                     })}
