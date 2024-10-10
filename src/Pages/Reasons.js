@@ -284,7 +284,7 @@ const Reasons = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this reason?");
     if (confirmDelete) {
       try {
-        await axios.delete(`${URL}/deletereasons/${id}`);
+        await axios.delete(`${URL}/reasons/${id}`);
         setReasonsList((prevReasons) => prevReasons.filter((item) => item._id !== id));
         setSuccess(true);
       } catch (err) {
