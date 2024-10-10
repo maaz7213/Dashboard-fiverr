@@ -200,8 +200,7 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
-                <p>Run Time: {shiftData.run_time} hours ({runPercentage.toFixed(2)}%)</p>
+                <p>Shift Duration: {convertTimeToMinutes(shiftData.shift_time).toFixed(2)} hours</p>
                 <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
                 <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
