@@ -252,6 +252,7 @@ const Reasons = () => {
         setSuccess(true);
         // Add the new reason to the reasonsList state
         setReasonsList((prevReasons) => [...prevReasons, response.data]);
+        window.location.reload();
       }
 
       setShowForm(false); // Hide the form after successful submission
