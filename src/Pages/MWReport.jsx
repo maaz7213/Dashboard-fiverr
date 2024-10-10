@@ -276,21 +276,21 @@ const MWReport = () => {
                       if (!shiftData) return null;
   
                       // Convert HH:mm:ss to seconds if valid, otherwise return 0
-                      const convertTimeToSeconds = (timeStr) => {
+                      const convertTimeToMinutes = (timeStr) => {
                         if (typeof timeStr === 'string' && timeStr.includes(':')) {
                           const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-                          return hours * 3600 + minutes * 60 + (seconds || 0);
+                          return hours * 60 + minutes + (seconds ? seconds / 60 : 0); // Convert seconds to minutes
                         }
                         return 0; // Default to 0 if timeStr is not a valid format
                       };
-  
-                      // Convert shift_time and run_time to seconds
-                      const shiftTimeInSeconds = convertTimeToSeconds(shiftData.shift_time);
-                      const runTimeInSeconds = convertTimeToSeconds(shiftData.run_time);
+                      
+                      // Convert shift_time and run_time to minutes
+                      const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
+                      const runTimeInMinutes = convertTimeToMinutes(shiftData.run_time);
   
                       // Calculate runPercentage
-                      const runPercentage = shiftTimeInSeconds > 0
-                        ? (shiftData.run_time / shiftTimeInSeconds) * 100
+                      const runPercentage = shiftTimeInMinutes > 0
+                        ? (shiftData.run_time / shiftTimeInMinutes) * 100
                         : 0;
   
                       const averagePercentage = (shiftData.average / shiftData.average_threshold) * 100 || 0;
@@ -307,7 +307,7 @@ const MWReport = () => {
                             colors={['#f94144', '#f8961e', '#43aa8b']}
                           />
                           <p>
-                            Shift Duration: {shiftTimeInSeconds || 'N/A'}
+                            Shift Duration: {shiftTimeInMinutes || 'N/A'}
                           </p>
                           <p>
                             Run Time: {shiftData.run_time || 'N/A'} ({runPercentage.toFixed(2)}%)
