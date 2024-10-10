@@ -303,7 +303,7 @@ const MWReport = () => {
                           <CircularProgress
                             size={150}
                             strokeWidth={10}
-                            percentages={[runPercentage, averagePercentage]}
+                            percentages={[0, averagePercentage]}
                             colors={['#f94144', '#f8961e', '#43aa8b']}
                           />
                           <p>
