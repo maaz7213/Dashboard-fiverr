@@ -23,7 +23,7 @@ function App() {
     console.log("Converting shift_time to hours:", shift_time); // Debugging
     if (typeof shift_time === 'string') {
       const [hours, minutes, seconds] = shift_time.split(':').map(Number);
-      return hours + minutes / 60 + seconds / 3600;
+      return hours * 60 + minutes + (seconds ? seconds / 60 : 0);
     } else if (typeof shift_time === 'number') {
       return shift_time / 60; // Assuming the number represents minutes
     }
@@ -31,28 +31,14 @@ function App() {
   };
 
 
-
-  const convertTimeToMinutes = (timeStr) => {
-    if (typeof timeStr === 'string' && timeStr.includes(':')) {
-      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-      return hours * 60 + minutes + (seconds ? seconds / 60 : 0); // Convert seconds to minutes
-    }
-    return 0; // Default to 0 if timeStr is not a valid format
-  };
-
-  // Convert shift_time and run_time to seconds
-
-  // Convert shift_time and run_time to minutes
   
   // Helper function to calculate percentages
   const calculatePercentages = (run_time, shift_time, average, average_threshold) => {
     console.log("Calculating Percentages:", { run_time, shift_time, average, average_threshold }); // Debugging
-    const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
 
 
-    const runPercentage = shiftTimeInMinutes > 0 ? (run_time / shiftTimeInMinutes) * 100 : 0;
+    const runPercentage = shift_time > 0 ? (run_time / shift_time) * 100 : 0;
     const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
-    console.log("Average", averagePercentage, "percentage", runPercentage);
     return [runPercentage, averagePercentage];
   };
 
@@ -75,7 +61,7 @@ function App() {
                 average_threshold: channel[shift].average_threshold,
                 percentages: calculatePercentages(
                   channel[shift].run_time,
-                  channel[shift].shift_time,
+                  shiftTimeInHours,
                   channel[shift].average,
                   channel[shift].average_threshold
                 )
@@ -201,7 +187,8 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {convertTimeToMinutes(shiftData.shift_time).toFixed(2)} hours</p>
+                <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
+                <p>Run Time: {shiftData.run_time} hours ({runPercentage.toFixed(2)}%)</p>
                 <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
                 <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
