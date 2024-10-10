@@ -169,7 +169,6 @@ function App() {
             // Only render the selected shift or all shifts if 'all' is selected
             if (selectedShift !== 'all' && shift !== selectedShift) return null;
             // const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
-            // const [runPercentage, averagePercentage] = shiftData.percentages;
             const convertTimeToMinutes = (timeStr) => {
               if (typeof timeStr === 'string' && timeStr.includes(':')) {
                 const [hours, minutes, seconds] = timeStr.split(':').map(Number);
@@ -181,28 +180,30 @@ function App() {
             // Convert shift_time and run_time to minutes
             const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
             const runTimeInMinutes = convertTimeToMinutes(shiftData.run_time);
-           
-            const runPercentagetOShow = shiftTimeInMinutes > 0
-            ? (shiftData.run_time / shiftTimeInMinutes) * 100
-            : 0;
 
-          const averagePercentagetoshow = (shiftData.average / shiftData.average_threshold) * 100 || 0;
+            // Calculate runPercentage
+            const runPercentage = shiftTimeInMinutes > 0
+              ? (shiftData.run_time / shiftTimeInMinutes) * 100
+              : 0;
+
+            const averagePercentage = (shiftData.average / shiftData.average_threshold) * 100 || 0;
+            
             return (
               <div
                 key={shift}
                 className="shift-section"
-                onClick={() => showModal(device.deviceNo, channelKey, shift, runPercentagetOShow)}
+                onClick={() => showModal(device.deviceNo, channelKey, shift, runPercentage)}
               >
                 <h4>{shift.charAt(0).toUpperCase() + shift.slice(1)} Shift</h4>
                 <CircularProgress
                   size={150}
                   strokeWidth={10}
-                  percentages={[runPercentagetOShow, averagePercentagetoshow]}
+                  percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
-                <p>Run Time: {shiftData.run_time} minutes ({averagePercentagetoshow.toFixed(2)}%)</p>
-                <p>Average: {shiftData.average} ({averagePercentagetoshow.toFixed(2)}%)</p>
+                <p>Shift Duration: {shiftTimeInMinutes} min</p>
+                <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
+                <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
             );
           })}
