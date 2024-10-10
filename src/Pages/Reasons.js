@@ -160,7 +160,8 @@
 //   );
 // }
 
-// export default Reasons;import React, { useState, useEffect } from "react";
+// export default Reasons;
+import React, { useState, useEffect } from "react";
 import axios from "axios"; // For API calls
 import { useNavigate } from "react-router-dom";
 import './reasons.css'; // We'll create this CSS file next
