@@ -212,23 +212,7 @@ function App() {
         </div>
 
         {/* Modal for machine details */}
-        <Modal 
-          title={`Details for Device ${selectedMachine?.machineNumber} - ${selectedMachine?.channel.toUpperCase()} - ${selectedMachine?.shift.charAt(0).toUpperCase() + selectedMachine?.shift.slice(1)} Shift`} 
-          visible={isModalVisible} 
-          onOk={handleOk} 
-          onCancel={handleCancel}
-          okText="Close"
-        >
-          {selectedMachine && (
-            <div>
-              <p><strong>Device {selectedMachine?.machineNumber}</strong></p>
-              <p>Channel: {selectedMachine?.channel.toUpperCase()}</p>
-              <p>Shift: {selectedMachine?.shift?.charAt(0)?.toUpperCase() + selectedMachine?.shift?.slice(1)}</p>
-              <p>Run Time Percentage: {selectedMachine?.percentage?.toFixed(2)}%</p>
-              <p>Average {selectedMachine}</p>
-            </div>
-          )}
-        </Modal>
+       
       </div>
     </div>
   );
