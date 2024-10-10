@@ -30,10 +30,27 @@ function App() {
     return 0;
   };
 
+
+
+  const convertTimeToMinutes = (timeStr) => {
+    if (typeof timeStr === 'string' && timeStr.includes(':')) {
+      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+      return hours * 60 + minutes + (seconds ? seconds / 60 : 0); // Convert seconds to minutes
+    }
+    return 0; // Default to 0 if timeStr is not a valid format
+  };
+
+  // Convert shift_time and run_time to seconds
+
+  // Convert shift_time and run_time to minutes
+  
   // Helper function to calculate percentages
   const calculatePercentages = (run_time, shift_time, average, average_threshold) => {
     console.log("Calculating Percentages:", { run_time, shift_time, average, average_threshold }); // Debugging
-    const runPercentage = shift_time > 0 ? (run_time / shift_time) * 100 : 0;
+    const shiftTimeInMinutes = convertTimeToMinutes(shiftData.shift_time);
+
+
+    const runPercentage = shiftTimeInMinutes > 0 ? (run_time / shiftTimeInMinutes) * 100 : 0;
     const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
     return [runPercentage, averagePercentage];
   };
@@ -211,24 +228,8 @@ function App() {
           </div>
         </div>
 
-        {/* Modal for machine details */}
-        <Modal 
-          title={`Details for Device ${selectedMachine?.machineNumber} - ${selectedMachine?.channel.toUpperCase()} - ${selectedMachine?.shift.charAt(0).toUpperCase() + selectedMachine?.shift.slice(1)} Shift`} 
-          visible={isModalVisible} 
-          onOk={handleOk} 
-          onCancel={handleCancel}
-          okText="Close"
-        >
-          {selectedMachine && (
-            <div>
-              <p><strong>Device {selectedMachine?.machineNumber}</strong></p>
-              <p>Channel: {selectedMachine?.channel.toUpperCase()}</p>
-              <p>Shift: {selectedMachine?.shift?.charAt(0)?.toUpperCase() + selectedMachine?.shift?.slice(1)}</p>
-              <p>Run Time Percentage: {selectedMachine?.percentage?.toFixed(2)}%</p>
-              <p>Average {selectedMachine}</p>
-            </div>
-          )}
-        </Modal>
+ 
+     
       </div>
     </div>
   );
