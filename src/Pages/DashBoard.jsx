@@ -52,6 +52,7 @@ function App() {
 
     const runPercentage = shiftTimeInMinutes > 0 ? (run_time / shiftTimeInMinutes) * 100 : 0;
     const averagePercentage = average_threshold > 0 ? (average / average_threshold) * 100 : 0;
+    console.log("Average", averagePercentage, "percentage", runPercentage);
     return [runPercentage, averagePercentage];
   };
 
