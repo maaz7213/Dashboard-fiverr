@@ -1,4 +1,4 @@
-/* App container that holds sidebar and content */
+App container that holds sidebar and content
 .app-container {
   display: flex;
   height: 100vh; /* Full height of the viewport */

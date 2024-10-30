@@ -310,14 +310,23 @@ const MWReport = () => {
                             colors={['#f94144', '#f8961e', '#43aa8b']}
                           />
                           <p>
-                           
-                            Shift Duration: {shiftTimeInMinutes || 'N/A'}
+                          <strong>
+                          Shift Duration: 
+                          </strong>
+                          {shiftTimeInMinutes || 'N/A'}
                           </p>
                           <p>
-                            Run Time: {shiftData.run_time || 'N/A'} ({runPercentage.toFixed(2)}%)
+
+                          <strong>
+                          Run Time: 
+                          </strong>
+                          {shiftData.run_time || 'N/A'} ({runPercentage.toFixed(2)}%)
                           </p>
                           <p>
-                            Average: {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)
+                          <strong>
+                          Average: 
+                          </strong>
+                          {shiftData.average || 'N/A'} ({averagePercentage.toFixed(2)}%)
                           </p>
                         </div>
                       );

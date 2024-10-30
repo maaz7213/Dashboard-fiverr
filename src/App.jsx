@@ -14,7 +14,13 @@ import DataEntryshow from './Pages/dataEntryshow';
 import BreakDataEntry from './Pages/BreakDataEntry';
 import Reasons from './Pages/Reasons';
 import ResonsStoppage from './Pages/ResonsStoppage';
-
+import image from '../src/Assests/unnamed.jpg'
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ReportIcon from '@mui/icons-material/Report';
+import ComputerIcon from '@mui/icons-material/Computer';
+import DangerousRoundedIcon from '@mui/icons-material/DangerousRounded';
 // Sidebar component
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -31,20 +37,22 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <h2>LOGO</h2>
+      <h4 style={{marginBottom:"30px"}}>
+      <img src={image} style={{width :'100%',height:'100px'}}/>
+      </h4>
       <ul>
         <li>
           <div onClick={() => handleMenuClick('home')}>
-            <Link to="/Dashboard" className={location.pathname === '/Dashboard' ? 'active' : ''}>Home</Link>
+            <Link to="/Dashboard" className={location.pathname === '/Dashboard' ? 'active' : ''}><HomeOutlinedIcon style={{width :'20px',height:'20px'}}/> Home</Link>
           </div>
         </li>
         <li>
           <div onClick={() => handleMenuClick('dataEntry')}>
-            <Link to="/dataEntry" className={location.pathname === '/dataEntry' ? 'active' : ''}>Data Entry</Link>
+            <Link to="/dataEntry" className={location.pathname === '/dataEntry' ? 'active' : ''}> <PostAddOutlinedIcon style={{width :'20px',height:'20px'}}/> Data Entry</Link>
           </div>
           {activeMenu === 'dataEntry' && (
             <ul className="submenu">
-              <li><Link to="/dataEntry" className={location.pathname === '/dataEntry' ? 'active' : ''}>Operator</Link></li>
+              <li><Link to="/dataEntry" className={location.pathname === '/dataEntry' ? 'active' : ''}> <SettingsIcon style={{width :'20px',height:'20px'}}/> Operator</Link></li>
               <li><Link to="/dataEntry/break" className={location.pathname === '/dataEntry/break' ? 'active' : ''}>Break</Link></li>
             </ul>
           )}
@@ -52,26 +60,26 @@ const Sidebar = () => {
 
         <li>
           <div onClick={() => handleMenuClick('report')}>
-            <Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}>Report</Link>
+            <Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}><ReportIcon style={{width :'20px',height:'20px'}}/> Report</Link>
           </div>
           {activeMenu === 'report' && (
             <ul className="submenu">
-              <li><Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}>Machine</Link></li>
-              <li><Link to="/mwreport/machine" className={location.pathname === '/mwreport/machine' ? 'active' : ''}>Operator</Link></li>
-              <li><Link to="/mwreport/stoppage" className={location.pathname === '/mwreport/stoppage' ? 'active' : ''}>Stoppage</Link></li>
+              <li><Link to="/mwreport/" className={location.pathname === '/mwreport/' ? 'active' : ''}><ComputerIcon style={{width :'20px',height:'20px'}}/> Machine</Link></li>
+              <li><Link to="/mwreport/machine" className={location.pathname === '/mwreport/machine' ? 'active' : ''}><SettingsIcon style={{width :'20px',height:'20px'}}/> Operator</Link></li>
+              <li><Link to="/mwreport/stoppage" className={location.pathname === '/mwreport/stoppage' ? 'active' : ''}><DangerousRoundedIcon style={{width :'20px',height:'20px'}}/> Stoppage</Link></li>
             </ul>
           )}
         </li>
 
         <li>
           <div onClick={() => handleMenuClick('master')}>
-            <Link to="/master" className={location.pathname === '/master' ? 'active' : ''}>Master</Link>
+            <Link to="/master" className={location.pathname === '/master' ? 'active' : ''}> <SettingsIcon style={{width :'20px',height:'20px'}}/> Master</Link>
           </div>
           {activeMenu === 'master' && (
             <ul className="submenu">
-              <li><Link to="/master/machine" className={location.pathname === '/master/machine' ? 'active' : ''}>Machine</Link></li>
-              <li><Link to="/master/Operator" className={location.pathname === '/master/Operator' ? 'active' : ''}>Operator</Link></li>
-              <li><Link to="/master/Reasons" className={location.pathname === '/master/Reasons' ? 'active' : ''}>Reasons</Link></li>
+              <li><Link to="/master/machine" className={location.pathname === '/master/machine' ? 'active' : ''}><ComputerIcon style={{width :'20px',height:'20px'}}/> Machine</Link></li>
+              <li><Link to="/master/Operator" className={location.pathname === '/master/Operator' ? 'active' : ''}> <SettingsIcon style={{width :'20px',height:'20px', gap:'2px'}}/> Operator</Link></li>
+              <li><Link to="/master/Reasons" className={location.pathname === '/master/Reasons' ? 'active' : ''}><DangerousRoundedIcon style={{width :'20px',height:'20px'}}/> Reasons</Link></li>
             </ul>
           )}
         </li>

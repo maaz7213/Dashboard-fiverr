@@ -1,6 +1,6 @@
 .wrapper-r {
   margin: 0 auto;
-  max-width: 600px;
+  max-width: 100%;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -69,4 +69,41 @@ button:hover {
 
 .success {
   color: green;
+}
+.reason-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.reason-content {
+ display: flex;
+ gap: 70px !important;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+
+.edit-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #45a049;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
 }

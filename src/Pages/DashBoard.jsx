@@ -51,7 +51,7 @@ function App() {
           const channel = device[key];
           channels[key] = {};
 
-          ['morning', 'evening'].forEach(shift => { // Focus on morning and evening shifts
+          ['morning', 'night'].forEach(shift => { // Focus on morning and evening shifts
             if (channel[shift]) {
               const shiftTimeInHours = getShiftTimeInHours(channel[shift].shift_time);
               channels[key][shift] = {
@@ -165,7 +165,7 @@ function App() {
       {Object.keys(device.channels).map(channelKey => (
         <div key={channelKey} className="channel-section">
           <h3>{channelKey.toUpperCase()}</h3>
-          {['morning', 'evening'].map(shift => {
+          {['morning', 'night'].map(shift => {
             const shiftData = device.channels[channelKey][shift];
             if (!shiftData) return null;
 
@@ -187,9 +187,9 @@ function App() {
                   percentages={[runPercentage, averagePercentage]}
                   colors={["#f94144", "#f8961e", "#43aa8b"]}
                 />
-                <p>Shift Duration: {shiftData.shift_time.toFixed(2)} hours</p>
-                <p>Run Time: {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
-                <p>Average: {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
+                <p> <strong>Shift Duration:</strong> {shiftData.shift_time.toFixed(2)} hours</p>
+                <p><strong>Run Time:</strong> {shiftData.run_time} minutes ({runPercentage.toFixed(2)}%)</p>
+                <p><strong>Average:</strong> {shiftData.average} ({averagePercentage.toFixed(2)}%)</p>
               </div>
             );
           })}
@@ -256,8 +256,8 @@ const Header = ({ selectedDate, setSelectedDate, selectedShift, setSelectedShift
             Morning
           </button>
           <button 
-            className={selectedShift === 'evening' ? 'active' : ''} 
-            onClick={() => setSelectedShift('evening')}
+            className={selectedShift === 'night' ? 'active' : ''} 
+            onClick={() => setSelectedShift('night')}
           >
             Evening
           </button>
