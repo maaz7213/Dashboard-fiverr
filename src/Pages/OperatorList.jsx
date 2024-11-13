@@ -1,44 +1,4 @@
-// import React, { useState } from 'react';
-// import './operator.css'
-// const OperatorList = () => {
-//   const [operatorName, setOperatorName] = useState(''); // For the current input
-//   const [operators, setOperators] = useState([]); // For the list of operators
 
-//   const handleInputChange = (e) => {
-//     setOperatorName(e.target.value); // Update the operatorName state with the input value
-//   };
-
-//   const handleAddOperator = () => {
-//     if (operatorName.trim() !== '') { // Make sure input is not empty
-//       setOperators([...operators, operatorName]); // Add the new operator to the array
-//       setOperatorName(''); // Clear the input field
-//     }
-//   };
-
-//   return (
-//     <div className="operator-list">
-//       <h2>Operator List</h2>
-//       <div className="input-container">
-//         <input
-//           type="text"
-//           value={operatorName}
-//           onChange={handleInputChange}
-//           placeholder="Enter operator name"
-//         />
-//         <button onClick={handleAddOperator}>Add Operator</button>
-//         </div>
-//       <ul>
-//         {operators.map((operator, index) => (
-//           <li key={index}>{operator}</li> // Display each operator in the list
-//         ))}
-//       </ul>
-
-//       <button>Save</button>
-//     </div>
-//   );
-// };
-
-// export default OperatorList;
 import React, { useState } from 'react';
 import axios from 'axios';
 import './operatorList.css'

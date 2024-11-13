@@ -45,7 +45,9 @@ body {
     border-radius: 4px;
     cursor: pointer;
   }
-  
+  .shift-filters{
+    display: flex;
+  }
   .time-filters button:hover {
     background-color: #007bff;
     color: #f0f0f0;

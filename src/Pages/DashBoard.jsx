@@ -8,6 +8,7 @@ import CircularProgress from '../Components/Progress';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { URL } from './URL';
+import DataModal from './DataModal';
 
 function App() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -17,7 +18,9 @@ function App() {
   const [yesterdayData, setYesterdayData] = useState([]); // For storing yesterday's filtered data
   const [selectedDate, setSelectedDate] = useState('today'); // 'today' or 'yesterday'
   const [selectedShift, setSelectedShift] = useState('morning'); // 'morning', 'evening', or 'all'
-
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
   // Helper function to convert shift_time to hours
   const getShiftTimeInHours = (shift_time) => {
     console.log("Converting shift_time to hours:", shift_time); // Debugging
@@ -119,10 +122,10 @@ function App() {
   };
 
   // Handle opening the modal
-  const showModal = (machineNumber, channel, shift, percentage) => {
-    console.log(`Opening Modal for Machine: ${machineNumber}, Channel: ${channel}, Shift: ${shift}, Percentage: ${percentage}`); // Debugging
-    setSelectedMachine({ machineNumber, channel, shift, percentage });
-    setIsModalVisible(true);
+  const showModals = (shiftData, channelKey, shift) => {
+    console.log("Opening modal for:", shiftData, channelKey, shift); // Debugging
+    setSelectedMachine({ ...shiftData, channelKey, shift }); 
+    handleShowModal()
   };
 
   // Handle closing the modal
@@ -178,7 +181,7 @@ function App() {
               <div
                 key={shift}
                 className="shift-section"
-                onClick={() => showModal(device.deviceNo, channelKey, shift, runPercentage)}
+                onClick={() => showModals(shiftData, channelKey, shift)} // Pass specific shift data
               >
                 <h4>{shift.charAt(0).toUpperCase() + shift.slice(1)} Shift</h4>
                 <CircularProgress
@@ -214,7 +217,11 @@ function App() {
           </div>
         </div>
 
- 
+  <DataModal 
+        showModal={showModal} 
+        onClose={handleCloseModal} 
+        data={selectedMachine} 
+      />
      
       </div>
     </div>
@@ -259,7 +266,7 @@ const Header = ({ selectedDate, setSelectedDate, selectedShift, setSelectedShift
             className={selectedShift === 'night' ? 'active' : ''} 
             onClick={() => setSelectedShift('night')}
           >
-            Evening
+            Night
           </button>
           <button 
             className={selectedShift === 'all' ? 'active' : ''} 

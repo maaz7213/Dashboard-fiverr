@@ -67,45 +67,53 @@ const MWReport = () => {
       console.log("Formatted Start Date:", formattedStartDate.format('YYYY-MM-DD'));
       console.log("Formatted End Date:", formattedEndDate.format('YYYY-MM-DD'));
 
-      const filtered = reportData.filter((report) => {
-        console.log("Filter by date range:", report.currentdate, { formattedStartDate, formattedEndDate });
-
+      const filtered = reportData.map((report) => {
         const [year, month, day] = report.currentdate.split('/');
         const fullYear = year.length === 2 ? `20${year}` : year;
         const reportDate = dayjs(`${fullYear}-${month}-${day}`, 'YYYY-MM-DD');
-
-        console.log("Converted report date:", reportDate.format('YYYY-MM-DD'));
-
+      
         if (!reportDate.isValid()) {
           console.log("Invalid report date:", reportDate);
-          return false;
+          return null;
         }
-
+      
+        // Check if the date is within the specified range
         const isWithinRange = reportDate.isBetween(formattedStartDate, formattedEndDate, 'day', '[]');
-        console.log(`Is ${reportDate.format('YYYY-MM-DD')} within range?`, isWithinRange);
-        if (!isWithinRange) return false;
-
+        if (!isWithinRange) return null;
+      
+        // Initialize filteredChannels for this report based on selected shift
         const filteredChannels = {};
-
+      
+        // Filter channels based on selected shift
         Object.keys(report).forEach((channelKey) => {
           if (channelKey.startsWith('ch')) {
             const shiftData = report[channelKey];
-            filteredChannels[channelKey] = {};
-
-            ['morning', 'evening', 'night'].forEach((shift) => {
-              if (selectedShift === 'all' || shift === selectedShift) {
-                if (shiftData && shiftData[shift]) {
-                  filteredChannels[channelKey][shift] = shiftData[shift];
-                }
-              }
-            });
+            
+            // Check if the selected shift exists in the shiftData
+            if (shiftData[selectedShift]) {
+              filteredChannels[channelKey] = {
+                [selectedShift]: shiftData[selectedShift],
+                channel_name: shiftData.channel_name, // Retain the channel name if needed
+              };
+            }else if (selectedShift === 'all') {
+              filteredChannels[channelKey] = {
+                ...shiftData, // Include all shifts (morning, evening, night if present)
+                channel_name: shiftData.channel_name,
+              };
+            
+            // Case 3: Selected shift does not exist and is not "all" - optionally handle missing shift
+            }else {
+              // Optional: If shift data for the selectedShift is missing, add a default or leave empty
+              console.log(`Shift data for ${selectedShift} not found in ${channelKey}`);
+            }
           }
         });
-
-        return Object.keys(filteredChannels).length > 0 ? { ...report, ...filteredChannels } : false;
-      });
-
-      console.log("Filtered data after date and shift:", filtered);
+      
+        // Return the filtered channels if any valid data exists
+        return Object.keys(filteredChannels).length > 0 ? { ...report, ...filteredChannels } : null;
+      }).filter(Boolean);
+      
+      // Set the filtered result to state
       setFilteredData(filtered);
     }
   }, [reportData, startDate, endDate, selectedShift]);
@@ -222,12 +230,6 @@ const MWReport = () => {
           Morning
         </button>
         <button
-          className={selectedShift === 'evening' ? 'active' : ''}
-          onClick={() => handleShiftChange('evening')}
-        >
-          Evening
-        </button>
-        <button
           className={selectedShift === 'night' ? 'active' : ''}
           onClick={() => handleShiftChange('night')}
         >
@@ -269,7 +271,7 @@ const MWReport = () => {
                 .filter((key) => key.startsWith('ch'))
                 .map((channelKey) => (
                   <div key={channelKey} className="channel-section">
-                    <h3>{channelKey.toUpperCase()}</h3>
+                    <h3>{device[channelKey].channel_name||channelKey.toUpperCase()}</h3>
                     {['morning', 'evening', 'night'].map((shift) => {
                       const shiftData = device[channelKey][shift];
                       if (!shiftData) return null;
